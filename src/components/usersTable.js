@@ -1,12 +1,10 @@
 /** @jsxImportSource @emotion/react */
-import React, {useState, useEffect} from 'react'
-import { Table, Button, Input, DatePicker, Tag } from 'antd';
+import React, { useState, useEffect } from 'react'
+import { Table, Button, Input, DatePicker, Tag, Modal, Spin } from 'antd';
 import { SearchOutlined } from "@ant-design/icons";
 import { breakupTableWrapper, headerClass, headerWrapper, tableSearchClass } from '@/styles/main-styles';
 import { useRouter } from 'next/router';
-
-const { Search } = Input;
-const { RangePicker } = DatePicker;
+import { generateID } from '@/utils/generateId';
 
 const columns = [
   {
@@ -14,7 +12,7 @@ const columns = [
     key: 'title',
     render: (row) => {
       return (
-        <div>{row.first_name+" "+row.last_name}</div>
+        <div>{row.first_name + " " + row.last_name}</div>
       )
     }
   },
@@ -30,13 +28,19 @@ const columns = [
   },
 ];
 
-function UsersTable({isHomePage}) {
+function UsersTable({ isHomePage }) {
   const router = useRouter();
   const [searchKeyword, setSearchKeyword] = useState('');
   // const [dateRange, setDateRange] = useState([]);
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
+  const [addUser, setAddUser] = useState(false);
+  const [fName, setFName] = useState("");
+  const [lName, setLName] = useState("");
+  const [email, setEmail] = useState("");
+  const [address, setAddress] = useState("");
+  const [required, setRequired] = useState(false);
 
   async function fetchUsersData() {
     // try {
@@ -50,28 +54,32 @@ function UsersTable({isHomePage}) {
     //   console.error('There was a problem with the fetch operation:', error);
     //   return null;
     // }
+    setLoading(true);
     let gData = require('./usersData.json');
     let userdata = isHomePage ? gData.slice(0, 5) : gData
     setData(userdata);
+    setLoading(false);
   }
 
   function filterGamesData() {
+    setLoading(true)
     let filtered = data;
-  
+
     if (searchKeyword) {
       filtered = filtered.filter((item) =>
-        (item.first_name+" "+item.last_name).toLowerCase().includes(searchKeyword.toLowerCase())
+        (item.first_name + " " + item.last_name).toLowerCase().includes(searchKeyword.toLowerCase())
       );
     }
-  
+
     // if (dateRange?.length > 1) {
     //   const momentFunc = moment;
     //   filtered = filtered.filter((item) =>
     //     moment(item.create_date, 'YYYY/MM/DD').isBetween(dateRange[0], dateRange[1])
     //   );
     // }
-  
+
     setFilteredData(filtered)
+    setLoading(false);
   }
 
   useEffect(() => {
@@ -80,32 +88,73 @@ function UsersTable({isHomePage}) {
 
   useEffect(() => {
     filterGamesData()
-  },[data, searchKeyword])
+  }, [data, searchKeyword])
+
+  const handleOk = () => {
+    if (fName, lName, email, address) {
+      let curData = [...data];
+      curData.push({
+        id: Number(generateID()),
+        first_name: fName,
+        last_name: lName,
+        email: email,
+        address: address
+      })
+      setData(curData);
+      setAddUser(false)
+      setFName("");
+      setLName("");
+      setEmail("");
+      setAddress("");
+      setRequired(false);
+      return;
+    }
+    return setRequired(true)
+  }
+
+  const handleCancel = () => {
+    setAddUser(false)
+    setFName("");
+    setLName("");
+    setEmail("");
+    setAddress("");
+    setRequired(false);
+  }
 
   return (
     <div>
       <div css={headerWrapper}>
         <div css={headerClass}>Users Data</div>
-        {!isHomePage && <Input
-          css={tableSearchClass}
-          placeholder="Search by name..."
-          prefix={<SearchOutlined />}
-          onChange={(e) => setSearchKeyword(e.target.value)}
-        />}
-        {isHomePage && <Tag color='#1677FF' style={{cursor: "pointer"}} onClick={()=>{
+        {!isHomePage && <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <Button style={{ marginRight: "10px" }} onClick={() => setAddUser(true)}>+ Add User</Button>
+          <Input
+            css={tableSearchClass}
+            placeholder="Search by name..."
+            prefix={<SearchOutlined />}
+            onChange={(e) => setSearchKeyword(e.target.value)}
+          />
+        </div>}
+        {isHomePage && <Tag color='#1677FF' style={{ cursor: "pointer" }} onClick={() => {
           router.push({
             pathname: "/users",
             query: router.query,
           });
         }}>View All</Tag>}
       </div>
-      <Table
-        loading={loading}
+      {!loading ? <Table
+        // loading={loading}
         css={breakupTableWrapper}
         columns={columns}
         dataSource={filteredData}
-        pagination={isHomePage ? false : {pageSize: 8}}
-      />
+        pagination={isHomePage ? false : { pageSize: 8 }}
+      /> : <Spin size="large" />}
+      <Modal title="Add User" open={addUser} onOk={handleOk} onCancel={handleCancel}>
+        <p>First Name: <Input onChange={(e) => setFName(e.target.value)} value={fName} /></p>
+        <p>Last Name: <Input onChange={(e) => setLName(e.target.value)} value={lName} /></p>
+        <p>Email: <Input onChange={(e) => setEmail(e.target.value)} value={email} /></p>
+        <p>Address: <Input onChange={(e) => setAddress(e.target.value)}value={address}/></p>
+        {required && <p style={{color: "red", margin: "10px"}}>**Please add all data</p>}
+      </Modal>
     </div>
   );
 }

@@ -1,9 +1,13 @@
 /** @jsxImportSource @emotion/react */
 import React, { useState, useEffect } from 'react'
-import { Table, Button, Input, DatePicker, Tag, Modal } from 'antd';
+import { Table, Button, Input, DatePicker, Tag, Modal, Spin, Space } from 'antd';
 import { SearchOutlined } from "@ant-design/icons";
 import { breakupTableWrapper, headerClass, headerWrapper, tableSearchClass } from '@/styles/main-styles';
 import { useRouter } from 'next/router';
+import { generateID } from '@/utils/generateId';
+import { format, isWithinInterval } from 'date-fns'
+
+const { RangePicker } = DatePicker;
 
 const columns = [
   {
@@ -24,7 +28,6 @@ const columns = [
 ];
 
 function GamesTable({ isHomePage }) {
-
   const router = useRouter();
   const [searchKeyword, setSearchKeyword] = useState('');
   const [dateRange, setDateRange] = useState([]);
@@ -38,7 +41,6 @@ function GamesTable({ isHomePage }) {
   const [required, setRequired] = useState(false);
 
   async function fetchGamesData() {
-    // setLoading(true);
     // try {
     //   const response = await fetch("https://my.api.mockaroo.com/games.json?key=e9a06770");
     //   if (!response.ok) {
@@ -50,10 +52,11 @@ function GamesTable({ isHomePage }) {
     //   console.error('There was a problem with the fetch operation:', error);
     //   return null;
     // }
-    // setLoading(false);
+    setLoading(true);
     let gData = require("./gamesData.json");
     let gameData = isHomePage ? gData.slice(0, 5) : gData;
     setData(gameData);
+    setLoading(false);
   }
 
   function filterGamesData() {
@@ -62,16 +65,15 @@ function GamesTable({ isHomePage }) {
 
     if (searchKeyword) {
       filtered = filtered.filter((item) =>
-        item?.title?.toLowerCase().includes(searchKeyword.toLowerCase())
+        (item?.title + " " + item?.genre)?.toLowerCase?.()?.includes(searchKeyword.toLowerCase())
       );
     }
 
-    // if (dateRange?.length > 1) {
-    //   const momentFunc = moment;
-    //   filtered = filtered.filter((item) =>
-    //     moment(item.create_date, 'YYYY/MM/DD').isBetween(dateRange[0], dateRange[1])
-    //   );
-    // }
+    if (dateRange?.length > 1) {
+      filtered = filtered.filter((item) =>
+      isWithinInterval(new Date(item.release_date), {start:new Date(dateRange[0]), end:new Date(dateRange[1])})
+      );
+    }
 
     setFilteredData(filtered)
     setLoading(false);
@@ -89,13 +91,17 @@ function GamesTable({ isHomePage }) {
     if (gameName, category, releaseDate) {
       let curData = [...data];
       curData.push({
-        id: Date.now().toString(36) + Math.random().toString(36).substr(2),
+        id: Number(generateID()),
         title: gameName,
         genre: category,
         release_date: releaseDate
       })
       setData(curData);
       setAddGame(false)
+      setGameName("");
+      setCategory("");
+      setReleaseDate(null);
+      setRequired(false);
       return;
     }
     return setRequired(true)
@@ -113,11 +119,12 @@ function GamesTable({ isHomePage }) {
     <div>
       <div css={headerWrapper}>
         <div css={headerClass}>Games Data</div>
-        {!isHomePage && <div style={{display: "flex", alignItems: "center", justifyContent: "space-between"}}>
-          <Button style={{marginRight: "10px"}} onClick={() => setAddGame(true)}>+Add Game</Button>
+        {!isHomePage && <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <Button style={{ marginRight: "10px" }} onClick={() => setAddGame(true)}>+ Add Game</Button>
+          <RangePicker format={"YYYY-MM-DD"} onChange={(val) => setDateRange(val)} />
           <Input
             css={tableSearchClass}
-            placeholder="Search by name..."
+            placeholder="Search by name & category..."
             prefix={<SearchOutlined />}
             onChange={(e) => setSearchKeyword(e.target.value)}
           />
@@ -130,17 +137,18 @@ function GamesTable({ isHomePage }) {
           });
         }}>View All</Tag>}
       </div>
-      <Table
-        loading={loading}
+      {!loading ? <Table
+        // loading={loading}
         css={breakupTableWrapper}
         columns={columns}
         dataSource={filteredData}
         pagination={isHomePage ? false : { pageSize: 8 }}
-      />
+      /> : <Spin size="large" />}
       <Modal title="Add Game" open={addGame} onOk={handleOk} onCancel={handleCancel}>
-        <p>Game Name: <Input onChange={(val) => setGameName(val)} /></p>
-        <p>Category: <Input onChange={(val) => setCategory(val)} /></p>
-        <p>Release Date: <Input type='date' onChange={(val) => setReleaseDate(val)} /></p>
+        <p>Game Name: <Input onChange={(e) => setGameName(e.target.value)} value={gameName} /></p>
+        <p>Category: <Input onChange={(e) => setCategory(e.target.value)} value={category} /></p>
+        <p>Release Date: <Input type='date' onChange={(e) => setReleaseDate(e.target.value)}value={releaseDate}/></p>
+        {required && <p style={{color: "red", margin: "10px"}}>**Please add all data</p>}
       </Modal>
     </div>
   );

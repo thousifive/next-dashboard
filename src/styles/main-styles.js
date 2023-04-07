@@ -46,8 +46,9 @@ export const sideBarMenuClass = css({
 
 export const headerWrapper = css({
   display: "flex",
-  justifyContent: "space-around",
-  alignItems: "center"
+  justifyContent: "space-between",
+  alignItems: "center",
+  marginLeft: "20px"
 });
 
 export const headerClass = css({
@@ -58,6 +59,7 @@ export const headerClass = css({
 });
 
 export const tableSearchClass = css({
+  marginLeft: "10px",
   width: "400px",
   background: "#F4F4F4",
   borderRadius: "12px",
