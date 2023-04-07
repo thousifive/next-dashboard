@@ -83,16 +83,16 @@ const App = ({ Component, pageProps }) => {
           }}
         />
       </Sider>
-      <Layout style={{height: "100vh"}}>
+      <Layout style={{minHeight: "100vh", overflowY: "auto"}}>
         <Header style={{ padding: 0, background: "#001628", textAlign: 'center' }}>
           <h1 style={{fontSize: "24px", color: "beige"}}>Dashboard</h1>
         </Header>
-        <Content style={{ margin: '24px 16px 0', height: "100%" }}>
-          <div style={{ padding: 24, minHeight: 360, background: colorBgContainer, height: "100%" }}>
+        <Content style={{ margin: '24px 16px 0' }}>
+          <div style={{ padding: 24, minHeight: 360, background: colorBgContainer }}>
           <Component {...pageProps} />
           </div>
         </Content>
-        <Footer style={{ textAlign: 'center', position: "sticky" }}>©2023 Created by <a target='_blank' href='https://github.com/thousifive' style={{color: "#1677FF"}}>thousifive</a></Footer>
+        {/* <Footer style={{ textAlign: 'center', position: "absolute" }}>©2023 Created by <a target='_blank' href='https://github.com/thousifive' style={{color: "#1677FF"}}>thousifive</a></Footer> */}
       </Layout>
     </Layout>
   );

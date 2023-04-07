@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react'
 import { Table, Button, Input, DatePicker, Tag, Modal, Spin, Space } from 'antd';
 import { SearchOutlined } from "@ant-design/icons";
-import { breakupTableWrapper, headerClass, headerWrapper, tableSearchClass } from '@/styles/main-styles';
+import { addData, breakupTableWrapper, dateResponsive, headerClass, headerWrapper, responsiveCol, tableFilters, tableSearchClass } from '@/styles/main-styles';
 import { useRouter } from 'next/router';
 import { generateID } from '@/utils/generateId';
 import { format, isWithinInterval } from 'date-fns'
@@ -11,19 +11,39 @@ const { RangePicker } = DatePicker;
 
 const columns = [
   {
+    title: "Games List",
+    responsive: ['xs'],
+    render: (rowData) => {
+      return <div>
+        <div>
+          <span css={responsiveCol}>Name:</span>{rowData.title}
+        </div>
+        <div>
+        <span css={responsiveCol}>Category:</span>{rowData.genre}
+        </div>
+        <div>
+        <span css={responsiveCol}>Release Date:</span>{rowData.release_date}
+        </div>
+      </div>
+    }
+  },
+  {
     title: 'Name',
     dataIndex: 'title',
     key: 'title',
+    responsive: ['sm'],
   },
   {
     title: 'Category',
     dataIndex: 'genre',
     key: 'genre',
+    responsive: ['sm'],
   },
   {
     title: 'Release Date',
     dataIndex: 'release_date',
     key: 'release_date',
+    responsive: ['sm'],
   },
 ];
 
@@ -119,9 +139,9 @@ function GamesTable({ isHomePage }) {
     <div>
       <div css={headerWrapper}>
         <div css={headerClass}>Games Data</div>
-        {!isHomePage && <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <Button style={{ marginRight: "10px" }} onClick={() => setAddGame(true)}>+ Add Game</Button>
-          <RangePicker format={"YYYY-MM-DD"} onChange={(val) => setDateRange(val)} />
+        {!isHomePage && <div css={tableFilters}>
+          <Button css={addData} onClick={() => setAddGame(true)}>+ Add Game</Button>
+          <RangePicker css={dateResponsive} format={"YYYY-MM-DD"} onChange={(val) => setDateRange(val)} />
           <Input
             css={tableSearchClass}
             placeholder="Search by name & category..."
@@ -143,6 +163,7 @@ function GamesTable({ isHomePage }) {
         columns={columns}
         dataSource={filteredData}
         pagination={isHomePage ? false : { pageSize: 8 }}
+        scroll
       /> : <Spin size="large" />}
       <Modal title="Add Game" open={addGame} onOk={handleOk} onCancel={handleCancel}>
         <p>Game Name: <Input onChange={(e) => setGameName(e.target.value)} value={gameName} /></p>

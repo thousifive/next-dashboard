@@ -2,14 +2,32 @@
 import React, { useState, useEffect } from 'react'
 import { Table, Button, Input, DatePicker, Tag, Modal, Spin } from 'antd';
 import { SearchOutlined } from "@ant-design/icons";
-import { breakupTableWrapper, headerClass, headerWrapper, tableSearchClass } from '@/styles/main-styles';
+import { breakupTableWrapper, headerClass, headerWrapper, tableSearchClass, responsiveCol, tableFilters, addData } from '@/styles/main-styles';
 import { useRouter } from 'next/router';
 import { generateID } from '@/utils/generateId';
 
 const columns = [
   {
+    title: "Users List",
+    responsive: ['xs'],
+    render: (rowData) => {
+      return <div>
+        <div>
+          <span css={responsiveCol}>Name:</span>{rowData.first_name + " " + rowData.last_name}
+        </div>
+        <div>
+        <span css={responsiveCol}>Email:</span>{rowData.email}
+        </div>
+        <div>
+        <span css={responsiveCol}>Address:</span>{rowData.address}
+        </div>
+      </div>
+    }
+  },
+  {
     title: 'Name',
     key: 'title',
+    responsive: ['sm'],
     render: (row) => {
       return (
         <div>{row.first_name + " " + row.last_name}</div>
@@ -20,11 +38,13 @@ const columns = [
     title: 'Email',
     dataIndex: 'email',
     key: 'email',
+    responsive: ['sm'],
   },
   {
     title: 'Address',
     dataIndex: 'address',
     key: 'address',
+    responsive: ['sm'],
   },
 ];
 
@@ -125,8 +145,8 @@ function UsersTable({ isHomePage }) {
     <div>
       <div css={headerWrapper}>
         <div css={headerClass}>Users Data</div>
-        {!isHomePage && <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <Button style={{ marginRight: "10px" }} onClick={() => setAddUser(true)}>+ Add User</Button>
+        {!isHomePage && <div css={tableFilters}>
+          <Button css={addData} onClick={() => setAddUser(true)}>+ Add User</Button>
           <Input
             css={tableSearchClass}
             placeholder="Search by name..."
@@ -147,6 +167,7 @@ function UsersTable({ isHomePage }) {
         columns={columns}
         dataSource={filteredData}
         pagination={isHomePage ? false : { pageSize: 8 }}
+        scroll={{x: true}}
       /> : <Spin size="large" />}
       <Modal title="Add User" open={addUser} onOk={handleOk} onCancel={handleCancel}>
         <p>First Name: <Input onChange={(e) => setFName(e.target.value)} value={fName} /></p>

@@ -4,7 +4,11 @@ export const mainDiv = css({
   display: "flex",
   alignItems: "start",
   justifyContent: "space-between",
-  gap: 20
+  gap: 20,
+  "@media (max-width: 768px)": {
+    display: "flex",
+    flexDirection: "column",
+  }
 })
 
 export const userName = css({
@@ -48,7 +52,11 @@ export const headerWrapper = css({
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
-  marginLeft: "20px"
+  marginLeft: "20px",
+  "@media (max-width: 768px)": {
+    flexDirection: "column",
+    justifyContent: "center"
+  }
 });
 
 export const headerClass = css({
@@ -56,6 +64,11 @@ export const headerClass = css({
   fontSize: "16px",
   lineHeight: "21px",
   color: "#3F3F41",
+  "@media (max-width: 768px)": {
+    fontWeight: "bold",
+    margin: "10px",
+    fontSize: "24px"
+  }
 });
 
 export const tableSearchClass = css({
@@ -70,6 +83,10 @@ export const tableSearchClass = css({
     background: "inherit",
     padding: "6px",
   },
+  "@media (max-width: 768px)": {
+    width: "100%",
+    marginLeft: 0
+  }
 });
 
 export const breakupTableWrapper = css({
@@ -98,7 +115,7 @@ export const breakupTableWrapper = css({
       "& td.ant-table-cell": {
         borderRadius: 0,
       },
-      "&.row-color":{
+      "&.row-color": {
         background: "#F9F9F9",
         borderRadius: 0,
         "&:hover": {
@@ -117,6 +134,40 @@ export const breakupTableWrapper = css({
 });
 
 export const homePageTable = css({
-  width: "50%", 
-  height: "50%"
+  width: "50%",
+  // width: "50%", 
+  // height: "50%"
+  "@media (max-width: 768px)": {
+    width: "100%",
+  }
+})
+
+export const responsiveCol = css({
+  color: "#86909C",
+  marginRight: "10px"
+})
+
+export const tableFilters = css({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  "@media (max-width: 768px)": {
+    flexDirection: "column",
+    justifyContent: "center",
+    gap: "10px"
+  }
+})
+
+export const dateResponsive = css({
+  "@media (max-width: 768px)": {
+    width: "100%"
+  }
+})
+
+export const addData = css({
+  marginRight: "10px",
+  "@media (max-width: 768px)": {
+    width: "100%",
+    marginRight: 0,
+  }
 })
