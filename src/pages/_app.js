@@ -33,21 +33,20 @@ const sideBarItems = [
 ];
 
 const App = ({ Component, pageProps }) => {
-  const router = useRouter();
-  if (router?.isFallback) {
-    return <Loader />;
-  }
-  const {
-    token: { colorBgContainer },
-  } = theme.useToken();
 
-  const defaultSelected = () => {
+  const router = useRouter();
+
+  const defaultSelected = useMemo(() => {
     const path = router.pathname;
     const ele = sideBarItems.find(
       (ele) =>
         ele.href === path);
-    return [(ele ? ele : sideMenuItem[0]).key];
-  };
+    return [(ele ? ele : sideBarItems[0]).key];
+  }, [router.pathname]);
+
+  const {
+    token: { colorBgContainer },
+  } = theme.useToken();
 
   return (
     <Layout style={{height: "100vh"}}>
