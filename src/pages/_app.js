@@ -7,6 +7,7 @@ import { Layout, Menu, Tag, theme } from 'antd';
 import { userName, sideBarMenuClass, height100 } from '@/styles/main-styles';
 import {MdGames, MdOutlineHome} from 'react-icons/md';
 import {FiUsers} from 'react-icons/fi'
+import { Loader } from 'next/dynamic';
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -33,17 +34,20 @@ const sideBarItems = [
 
 const App = ({ Component, pageProps }) => {
   const router = useRouter();
+  if (router?.isFallback) {
+    return <Loader />;
+  }
   const {
     token: { colorBgContainer },
   } = theme.useToken();
 
-  const defaultSelected = useMemo(() => {
+  const defaultSelected = () => {
     const path = router.pathname;
     const ele = sideBarItems.find(
       (ele) =>
         ele.href === path);
     return [(ele ? ele : sideMenuItem[0]).key];
-  }, [router.pathname]);
+  };
 
   return (
     <Layout style={{height: "100vh"}}>
