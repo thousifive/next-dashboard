@@ -63,17 +63,6 @@ function UsersTable({ isHomePage }) {
   const [required, setRequired] = useState(false);
 
   async function fetchUsersData() {
-    // try {
-    //   const response = await fetch("https://my.api.mockaroo.com/users.json?key=e9a06770");
-    //   if (!response.ok) {
-    //     throw new Error('Network response was not ok');
-    //   }
-    //   const data = await response.json();
-    //   setData(data)
-    // } catch (error) {
-    //   console.error('There was a problem with the fetch operation:', error);
-    //   return null;
-    // }
     setLoading(true);
     let gData = require('./usersData.json');
     let userdata = isHomePage ? gData.slice(0, 5) : gData
@@ -90,13 +79,6 @@ function UsersTable({ isHomePage }) {
         (item.first_name + " " + item.last_name).toLowerCase().includes(searchKeyword.toLowerCase())
       );
     }
-
-    // if (dateRange?.length > 1) {
-    //   const momentFunc = moment;
-    //   filtered = filtered.filter((item) =>
-    //     moment(item.create_date, 'YYYY/MM/DD').isBetween(dateRange[0], dateRange[1])
-    //   );
-    // }
 
     setFilteredData(filtered)
     setLoading(false);
@@ -162,7 +144,6 @@ function UsersTable({ isHomePage }) {
         }}>View All</Tag>}
       </div>
       {!loading ? <Table
-        // loading={loading}
         css={breakupTableWrapper}
         columns={columns}
         dataSource={filteredData}

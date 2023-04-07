@@ -1,7 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import styles from '@/styles/Home.module.css'
 import GamesTable from '@/components/gamesTable'
-import { Space } from 'antd'
 import UsersTable from '@/components/usersTable'
 import { mainDiv, homePageTable } from '@/styles/main-styles'
 

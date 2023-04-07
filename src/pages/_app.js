@@ -7,7 +7,6 @@ import { Layout, Menu, Tag, theme } from 'antd';
 import { userName, sideBarMenuClass, height100 } from '@/styles/main-styles';
 import {MdGames, MdOutlineHome} from 'react-icons/md';
 import {FiUsers} from 'react-icons/fi'
-import { Loader } from 'next/dynamic';
 
 const { Header, Content, Footer, Sider } = Layout;
 

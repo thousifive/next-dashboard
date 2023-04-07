@@ -1,11 +1,11 @@
 /** @jsxImportSource @emotion/react */
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { Table, Button, Input, DatePicker, Tag, Modal, Spin, Space } from 'antd';
 import { SearchOutlined } from "@ant-design/icons";
 import { addData, breakupTableWrapper, dateResponsive, headerClass, headerWrapper, responsiveCol, tableFilters, tableSearchClass } from '@/styles/main-styles';
 import { useRouter } from 'next/router';
 import { generateID } from '@/utils/generateId';
-import { format, isWithinInterval } from 'date-fns'
+import { isWithinInterval } from 'date-fns'
 
 const { RangePicker } = DatePicker;
 
@@ -61,17 +61,6 @@ function GamesTable({ isHomePage }) {
   const [required, setRequired] = useState(false);
 
   async function fetchGamesData() {
-    // try {
-    //   const response = await fetch("https://my.api.mockaroo.com/games.json?key=e9a06770");
-    //   if (!response.ok) {
-    //     throw new Error('Network response was not ok');
-    //   }
-    //   const data = await response.json();
-    //   setData(data)
-    // } catch (error) {
-    //   console.error('There was a problem with the fetch operation:', error);
-    //   return null;
-    // }
     setLoading(true);
     let gData = require("./gamesData.json");
     let gameData = isHomePage ? gData.slice(0, 5) : gData;
@@ -158,7 +147,6 @@ function GamesTable({ isHomePage }) {
         }}>View All</Tag>}
       </div>
       {!loading ? <Table
-        // loading={loading}
         css={breakupTableWrapper}
         columns={columns}
         dataSource={filteredData}
